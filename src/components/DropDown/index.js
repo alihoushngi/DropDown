@@ -7,12 +7,11 @@ import { type } from "@testing-library/user-event/dist/type";
 
 const { gray } = globalVars;
 
-const DropDown = ({ item, data, onDelete, onChange }) => {
+const DropDown = ({ items, selected, onDelete, setSelected }) => {
   const [isActive, setIsActive] = useState(false);
-  const [itemDefaults, setItemDefaults] = useState("");
+  const [isChecked, setIsChecked] = useState(true);
   const [search, setSearch] = useState("");
-  const [isCheckbox, setIsCheckbox] = useState(false);
-  const [isAccess, setIsAccess] = useState(isCheckbox);
+
   const [itemSelected, setItemSelected] = useState("");
   // const [coin, setCoin] = useState("");
 
@@ -36,25 +35,23 @@ const DropDown = ({ item, data, onDelete, onChange }) => {
   };
   const changeDefault = (e, val, id, name) => {
     e.preventDefault();
-    setItemDefaults(val);
-    let selected = {
+    let newSelected = {
       id,
       name,
       value: val,
     };
-    onChange([...data, selected]);
-    setItemSelected([...data, selected]);
+    setSelected([...selected, newSelected]);
+    setItemSelected([...selected, newSelected]);
   };
 
   const searchHandeler = (event) => {
     setSearch(event.target.value);
   };
 
-  const searchCoins = item.filter((item) =>
+  const searchCoins = items.filter((item) =>
     item.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  // const enableSearch = () => {};
   return (
     <Wrapper ref={menuRef}>
       <h3>DropDown</h3>
@@ -63,17 +60,18 @@ const DropDown = ({ item, data, onDelete, onChange }) => {
         <Checkbox
           name="Checkbox"
           type="checkbox"
-          value={isCheckbox}
-          onChange={() => setIsCheckbox((prev) => !prev)}
+          value={isChecked}
+          checked={isChecked}
+          onChange={() => setIsChecked((prev) => !prev)}
         />
       </CheckboxWrapper>
-      <OptionContainer onClick={onClickHandler} pointer={isCheckbox}>
+      <OptionContainer onClick={onClickHandler} pointer={isChecked}>
         <Option>
           <InputWrapper>
             <TextIput>
               <Items>
-                {data.length > 0 ? (
-                  data.map((item) => (
+                {selected.length > 0 ? (
+                  selected.map((item) => (
                     <List key={item.id}>
                       {item.name}
                       <FaTimes
@@ -94,8 +92,8 @@ const DropDown = ({ item, data, onDelete, onChange }) => {
               <SearchInput
                 value={search}
                 onChange={searchHandeler}
-                placeholder={data.length === 0 ? "search" : ""}
-                access={isAccess}
+                placeholder={selected.length === 0 ? "search" : ""}
+                access={isChecked}
               />
             </TextIput>
             <Icon rot={isActive}>{"<"}</Icon>
@@ -103,15 +101,19 @@ const DropDown = ({ item, data, onDelete, onChange }) => {
           <div></div>
         </Option>
         <Select vis={isActive}>
-          {searchCoins.map((item) => (
-            <Item
-              key={item.id}
-              value={item.value}
-              onClick={(e) => changeDefault(e, item.value, item.id, item.label)}
-            >
-              {item.label}
-            </Item>
-          ))}
+          {searchCoins.map((item) => {
+            return (
+              <Item
+                key={item.id}
+                value={item.value}
+                onClick={(e) =>
+                  changeDefault(e, item.value, item.id, item.label)
+                }
+              >
+                {item.label}
+              </Item>
+            );
+          })}
         </Select>
       </OptionContainer>
     </Wrapper>

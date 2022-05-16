@@ -2,7 +2,7 @@ import { useState } from "react";
 import DropDown from "./components/DropDown";
 
 function App() {
-  const [coin, setCoin] = useState([
+  const [data, setData] = useState([
     { id: 1, label: "Bitcoin", value: "Bitcoin" },
     { id: 2, label: "Ethereum", value: "Ethereum" },
     { id: 3, label: "Cardano", value: "Cardano" },
@@ -13,10 +13,10 @@ function App() {
     { id: 8, label: "DogCoin", value: "DogCoin" },
   ]);
 
-  const [data, setData] = useState([]);
+  const [selected, setSelected] = useState([]);
 
   const deleteCoins = (id) => {
-    setData(data.filter((item) => item.id !== id));
+    setSelected(selected.filter((item) => item.id !== id));
   };
 
   return (
@@ -29,10 +29,10 @@ function App() {
       }}
     >
       <DropDown
-        item={coin}
+        items={data}
         onDelete={deleteCoins}
-        data={data}
-        onChange={setData}
+        selected={selected}
+        setSelected={setSelected}
       />
     </div>
   );
